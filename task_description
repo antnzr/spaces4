@@ -1,0 +1,76 @@
+import java.util.*;
+
+/**
+The task is to implement the Library protocol (you can do that in this file directly).
+- No database or any other storage is required, just store data in memory
+- No any smart search, use String method contains (case sensitive/insensitive - does not matter)
+–   Performance optimizations are optional
+*/
+
+class Book {
+    final String id;
+    final String name;
+    final String author;
+    Book(String id, String name, String author) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+    }
+}
+
+interface Library {
+	/**
+	  Adds a new book object to the Library.
+	  @param book: book to add to the Library
+	  @return false if the book with same id already exists in the Library, true – otherwise.
+	*/
+    boolean addNewBook(Book book);
+
+	/**
+	  Deletes the book with the specified id from the Library.
+	  @return true if the book with same id existed in the Library, false – otherwise.
+	*/
+    boolean deleteBook(String id);
+
+	/**
+	  @return 10 book names containing the specified string. If there are several books with the same name, author's name is appended to book's name.
+	*/
+    Collection<String> listBooksByName(String searchString);
+
+	/**
+	  @return 10 book names whose author contains the specified string, ordered by authors.
+	*/
+	List<String> listBooksByAuthor(String searchString);
+}
+
+class Main {
+    public static void main(String[] args) {
+        // test(new LibraryImpl());
+    }
+    private void test(Library lib) {
+        assertTrue(!lib.deleteBook("1"));
+        assertTrue(lib.addNewBook(new Book("1", "1", "Lex")));
+        assertTrue(!lib.addNewBook(new Book("1", "1", "Lex")));
+        assertTrue(lib.deleteBook("1"));
+        assertTrue(lib.addNewBook(new Book("4", "Name1", "Lex3")));
+        assertTrue(lib.addNewBook(new Book("3", "Name3", "Lex2")));
+        assertTrue(lib.addNewBook(new Book("2", "Name2", "Lex2")));
+        assertTrue(lib.addNewBook(new Book("1", "Name1", "Lex1")));
+        final Collection<String> byNames = lib.listBooksByName("Name");
+        assertTrue(byNames.contains("Lex3 - Name1"));
+        assertTrue(byNames.contains("Name2"));
+        assertTrue(byNames.contains("Name3"));
+        assertTrue(byNames.contains("Lex1 - Name1"));
+        final List<String> byAuthor = lib.listBooksByAuthor("Lex");
+        assertTrue(byAuthor.get(0) == "Name1");
+        assertTrue(byAuthor.get(1) == "Name2" || byAuthor.get(1) == "Name3");
+        assertTrue(byAuthor.get(2) == "Name2" || byAuthor.get(2) == "Name3");
+        assertTrue(byAuthor.get(3) == "Name1");
+    }
+
+    private void assertTrue(boolean condition) {
+        if (!condition) {
+            throw new Error("assert failed");
+        }
+    }
+}
